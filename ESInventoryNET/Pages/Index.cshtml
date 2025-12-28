@@ -1,0 +1,82 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Elasticsearch Index Inventory";
+}
+
+<div class="container mt-4">
+    <h1 class="display-4">Elasticsearch Index Inventory</h1>
+    <p class="lead">Viewing all indexes from your Elasticsearch endpoint</p>
+
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="alert alert-danger" role="alert">
+            <strong>Error:</strong> @Model.ErrorMessage
+        </div>
+    }
+
+    @if (Model.Indexes.Any())
+    {
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Index Name</th>
+                        <th>Document Count</th>
+                        <th>Store Size</th>
+                        <th>Health</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var index in Model.Indexes)
+                    {
+                        <tr>
+                            <td><strong>@index.Name</strong></td>
+                            <td>@index.DocumentCount</td>
+                            <td>@index.StoreSize</td>
+                            <td>
+                                @if (index.Health == "green")
+                                {
+                                    <span class="badge bg-success">@index.Health</span>
+                                }
+                                else if (index.Health == "yellow")
+                                {
+                                    <span class="badge bg-warning">@index.Health</span>
+                                }
+                                else if (index.Health == "red")
+                                {
+                                    <span class="badge bg-danger">@index.Health</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">@index.Health</span>
+                                }
+                            </td>
+                            <td>
+                                @if (index.Status == "open")
+                                {
+                                    <span class="badge bg-success">@index.Status</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">@index.Status</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="alert alert-info mt-3">
+            <strong>Total Indexes:</strong> @Model.Indexes.Count
+        </div>
+    }
+    else if (string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="alert alert-warning" role="alert">
+            No indexes found or still loading...
+        </div>
+    }
+</div>
